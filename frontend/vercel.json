@@ -1,7 +1,7 @@
 {
-  "buildCommand": "CI=false pnpm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "installCommand": "pnpm install",
+  "installCommand": "npm install",
   "rewrites": [
     {
       "source": "/(.*)",
