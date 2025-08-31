@@ -162,7 +162,7 @@ const Contact = () => {
     
     try {
       // Submit contact form
-      const contactResponse = await axios.post('http://localhost:5000/api/contact', {
+      const contactResponse = await axios.post('/api/contact', {
         firstName: callbackRequest.name.split(' ')[0] || callbackRequest.name,
         lastName: callbackRequest.name.split(' ').slice(1).join(' ') || 'N/A',
         email: callbackRequest.email,
@@ -180,7 +180,7 @@ Message: ${callbackRequest.message || 'No additional message'}`
       if (contactResponse.data.success) {
         // Send notification to admin about the callback request
         try {
-          await axios.post('http://localhost:5000/api/notifications/callback', {
+          await axios.post('/api/notifications/callback', {
             title: '📞 Urgent Callback Request',
             message: `New callback request from ${callbackRequest.name} (${callbackRequest.email} | ${callbackRequest.phone}). Preferred time: ${callbackRequest.preferredDate} at ${callbackRequest.preferredTime}`,
             type: 'callback',
@@ -214,7 +214,7 @@ Message: ${callbackRequest.message || 'No additional message'}`
     setIsLoading(true);
     
     try {
-      const response = await axios.post('http://localhost:5000/api/contact', data);
+      const response = await axios.post('/api/contact', data);
       
       if (response.data.success) {
         setIsSubmitted(true);

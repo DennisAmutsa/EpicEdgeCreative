@@ -46,7 +46,7 @@ const AdminContacts = () => {
         params.status = filter;
       }
 
-      const response = await axios.get('http://localhost:5000/api/contact', {
+      const response = await axios.get('/api/contact', {
         headers: { Authorization: `Bearer ${token}` },
         params
       });
@@ -72,7 +72,7 @@ const AdminContacts = () => {
       const token = localStorage.getItem('token');
       
       const response = await axios.put(
-        `http://localhost:5000/api/contact/${id}/status`,
+        `/api/contact/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -95,7 +95,7 @@ const AdminContacts = () => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await axios.delete(`http://localhost:5000/api/contact/${id}`, {
+      const response = await axios.delete(`/api/contact/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
