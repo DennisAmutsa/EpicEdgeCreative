@@ -1,0 +1,38 @@
+{
+  "name": "epicedge-creative",
+  "version": "1.0.0",
+  "description": "EpicEdge Creative - Full-stack project management system",
+  "scripts": {
+    "install:all": "pnpm run install:backend && pnpm run install:frontend",
+    "install:backend": "cd backend && pnpm install",
+    "install:frontend": "cd frontend && pnpm install",
+    "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev:backend": "cd backend && pnpm run dev",
+    "dev:frontend": "cd frontend && pnpm start",
+    "start:backend": "cd backend && pnpm start",
+    "start:frontend": "cd frontend && pnpm run build && serve -s build",
+    "build": "cd frontend && pnpm run build"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "serve": "^14.2.1"
+  },
+  "keywords": [
+    "project-management",
+    "creative-agency",
+    "react",
+    "nodejs",
+    "mongodb",
+    "fullstack"
+  ],
+  "author": "EpicEdge Creative",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/epicedge-creative.git"
+  }
+}

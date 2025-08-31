@@ -1,0 +1,66 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'epicedge_creative_super_secret_key_2024';
+
+// Middleware to verify JWT token
+const authenticateToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Access token required' 
+      });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.userId).select('-password');
+    
+    if (!user || !user.isActive) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid token or user not found' 
+      });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid token' 
+    });
+  }
+};
+
+// Middleware to check if user is admin
+const requireAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Admin access required' 
+    });
+  }
+  next();
+};
+
+// Middleware to check if user is client or admin
+const requireClientOrAdmin = (req, res, next) => {
+  if (!['client', 'admin'].includes(req.user.role)) {
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Client or admin access required' 
+    });
+  }
+  next();
+};
+
+module.exports = {
+  authenticateToken,
+  requireAdmin,
+  requireClientOrAdmin
+};
