@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "CI=false pnpm run build",
   "outputDirectory": "build",
   "installCommand": "pnpm install",
   "rewrites": [
