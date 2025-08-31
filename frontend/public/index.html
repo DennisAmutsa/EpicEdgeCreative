@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#d97706" />
+    
+    <!-- Primary Meta Tags -->
+    <title>EpicEdge Creative - Project Management for Creative Agencies | Design, Code & Care</title>
+    <meta name="title" content="EpicEdge Creative - Project Management for Creative Agencies | Design, Code & Care" />
+    <meta name="description" content="Transform your creative agency with EpicEdge Creative's powerful project management system. Track progress, collaborate with clients, and deliver exceptional results. Empowering your brand with design, code, and care." />
+    <meta name="keywords" content="project management, creative agency, design, web development, client collaboration, project tracking, creative services, digital agency, brand empowerment, Nairobi, Kenya" />
+    <meta name="author" content="EpicEdge Creative" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://epicedgecreative.com/" />
+    <meta property="og:title" content="EpicEdge Creative - Project Management for Creative Agencies" />
+    <meta property="og:description" content="Transform your creative agency with our powerful project management system. Empowering your brand with design, code, and care." />
+    <meta property="og:image" content="%PUBLIC_URL%/logo.png" />
+    <meta property="og:site_name" content="EpicEdge Creative" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://epicedgecreative.com/" />
+    <meta property="twitter:title" content="EpicEdge Creative - Project Management for Creative Agencies" />
+    <meta property="twitter:description" content="Transform your creative agency with our powerful project management system. Empowering your brand with design, code, and care." />
+    <meta property="twitter:image" content="%PUBLIC_URL%/logo.png" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="format-detection" content="telephone=yes" />
+    <meta name="geo.region" content="KE" />
+    <meta name="geo.placename" content="Nairobi" />
+    <meta name="geo.position" content="-1.286389;36.817223" />
+    <meta name="ICBM" content="-1.286389, 36.817223" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://epicedgecreative.com/" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Apple Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="%PUBLIC_URL%/logo.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="%PUBLIC_URL%/logo.png" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "EpicEdge Creative",
+      "description": "Empowering your brand with design, code, and care. Professional project management system for creative agencies.",
+      "url": "https://epicedgecreative.com",
+      "logo": "https://epicedgecreative.com/logo.png",
+      "email": "epicedgecreative@gmail.com",
+      "telephone": "+254787205456",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nairobi",
+        "addressCountry": "Kenya"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/epicedge-creative",
+        "https://twitter.com/epicedgecreative",
+        "https://www.instagram.com/epicedgecreative"
+      ],
+      "foundingDate": "2023",
+      "founders": [
+        {
+          "@type": "Person",
+          "name": "EpicEdge Creative Team"
+        }
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+254787205456",
+        "contactType": "Customer Service",
+        "email": "epicedgecreative@gmail.com",
+        "availableLanguage": "English"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Kenya"
+      },
+      "knowsAbout": [
+        "Project Management",
+        "Creative Agency Services",
+        "Web Development",
+        "Digital Design",
+        "Client Collaboration",
+        "Brand Development"
+      ]
+    }
+    </script>
+
+    
+    <!-- Inline styles for instant loading screen -->
+    <style>
+      /* Loading screen styles */
+      #initial-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      /* Hide loading screen when React loads */
+      #initial-loading.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      /* Logo animation */
+      .loading-logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: logoSpin 1.5s ease-in-out;
+        margin-bottom: 1.5rem;
+      }
+      
+      @keyframes logoSpin {
+        0% { 
+          transform: scale(0.8) rotate(0deg);
+          opacity: 0;
+        }
+        50% { 
+          transform: scale(1.1) rotate(180deg);
+          opacity: 0.8;
+        }
+        100% { 
+          transform: scale(1) rotate(360deg);
+          opacity: 1;
+        }
+      }
+      
+      /* Loading text */
+      .loading-text {
+        color: #1f2937;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+      }
+      
+      .loading-subtext {
+        color: #6b7280;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.8s ease-out 0.8s both;
+      }
+      
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Spinner */
+      .loading-spinner {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        animation: fadeInUp 0.6s ease-out 1.2s both;
+      }
+      
+      .spinner-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 3px solid #e5e7eb;
+        border-radius: 50%;
+        border-top-color: #d97706;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    
+    <!-- Initial Loading Screen -->
+    <div id="initial-loading">
+      <!-- Logo -->
+      <div class="loading-logo">
+        <img src="%PUBLIC_URL%/logo.png" alt="EpicEdge Creative" width="100" height="100" style="border-radius: 20px;" />
+      </div>
+      
+      <!-- Loading text -->
+      <div class="loading-text">EpicEdge Creative</div>
+      <div class="loading-subtext">Design • Code • Care</div>
+      
+      <!-- Spinner -->
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+      </div>
+    </div>
+    
+    <div id="root"></div>
+    
+    <!-- Hide loading screen when React loads -->
+    <script>
+      // Hide loading screen quickly (under 2 seconds)
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loadingScreen = document.getElementById('initial-loading');
+          if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            // Remove from DOM after transition
+            setTimeout(function() {
+              loadingScreen.remove();
+            }, 500);
+          }
+        }, 1500); // Show for 1.5 seconds max
+      });
+      
+      // Also hide when React has mounted (backup)
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check if React has mounted after a short delay
+        setTimeout(function() {
+          const reactRoot = document.getElementById('root');
+          if (reactRoot && reactRoot.children.length > 0) {
+            const loadingScreen = document.getElementById('initial-loading');
+            if (loadingScreen) {
+              loadingScreen.classList.add('hidden');
+              setTimeout(function() {
+                loadingScreen.remove();
+              }, 500);
+            }
+          }
+        }, 1800); // Maximum 1.8 seconds
+      });
+    </script>
+  </body>
+</html>

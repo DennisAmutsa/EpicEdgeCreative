@@ -1,0 +1,46 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /login
+Allow: /register
+
+# Disallow private areas
+Disallow: /dashboard
+Disallow: /projects
+Disallow: /profile
+Disallow: /admin-*
+Disallow: /create-project
+Disallow: /edit-project
+
+# Allow crawling of static assets
+Allow: /logo.png
+Allow: /manifest.json
+Allow: /static/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.ico$
+
+# Block common crawlers that don't respect robots.txt properly
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap location
+Sitemap: https://epicedgecreative.com/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
+
+# Cache directive
+Cache-delay: 1

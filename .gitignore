@@ -93,7 +93,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public (commented out to allow React's public folder)
 
 # Vuepress build output
 .vuepress/dist
@@ -239,7 +239,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public (commented out to allow React's public folder)
 
 # Vuepress build output
 .vuepress/dist

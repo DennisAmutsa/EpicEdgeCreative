@@ -1,0 +1,38 @@
+{
+  "short_name": "EpicEdge Creative",
+  "name": "EpicEdge Creative - Project Management for Creative Agencies",
+  "description": "Transform your creative agency with our powerful project management system. Empowering your brand with design, code, and care.",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#d97706",
+  "background_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "label": "EpicEdge Creative Dashboard"
+    }
+  ]
+}
