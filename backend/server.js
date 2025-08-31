@@ -14,7 +14,6 @@ const app = express();
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        'https://epic-edge-creative-frontend.vercel.app',
         'https://epicedgecreative.vercel.app',
         process.env.FRONTEND_URL
       ] 
