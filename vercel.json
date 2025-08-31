@@ -1,4 +1,8 @@
 {
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "build",
+  "installCommand": "pnpm install",
+  "framework": "create-react-app",
   "rewrites": [
     {
       "source": "/(.*)",
@@ -25,4 +29,3 @@
     }
   ]
 }
-

@@ -74,7 +74,7 @@ const Dashboard = () => {
     {
       refetchOnWindowFocus: false,
       staleTime: 2 * 60 * 1000, // 2 minutes
-      enabled: true, // Fetch for both admin and clients
+      enabled: !isAdmin, // Only fetch for clients
     }
   );
 
@@ -560,61 +560,26 @@ const Dashboard = () => {
             <div className="p-6">
               {projects && projects.length > 0 ? (
                 <div className="space-y-4">
-                  {/* Recent notifications */}
+                  {/* Recent notifications from admin */}
                   {notifications?.slice(0, 2).map((notification, index) => {
                     const timeAgo = new Date(notification.createdAt);
                     const now = new Date();
                     const diffHours = Math.floor((now - timeAgo) / (1000 * 60 * 60));
                     const timeString = diffHours < 24 ? `${diffHours}h ago` : `${Math.floor(diffHours / 24)}d ago`;
                     
-                    // Get icon based on notification type
-                    const getNotificationIcon = (type) => {
-                      switch (type) {
-                        case 'payment': return <DollarSign className="w-4 h-4 text-green-600" />;
-                        case 'meeting': return <Calendar className="w-4 h-4 text-blue-600" />;
-                        case 'project_update': return <FolderOpen className="w-4 h-4 text-amber-600" />;
-                        default: return <Bell className="w-4 h-4 text-amber-600" />;
-                      }
-                    };
-
-                    const getNotificationBg = (type) => {
-                      switch (type) {
-                        case 'payment': return 'bg-green-100';
-                        case 'meeting': return 'bg-blue-100';
-                        case 'project_update': return 'bg-amber-100';
-                        default: return 'bg-amber-100';
-                      }
-                    };
-                    
                     return (
                       <div key={notification._id} className="flex items-start space-x-3">
-                        <div className={`w-8 h-8 ${getNotificationBg(notification.type)} rounded-full flex items-center justify-center flex-shrink-0`}>
-                          {getNotificationIcon(notification.type)}
+                        <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Bell className="w-4 h-4 text-amber-600" />
                         </div>
                         <div className="flex-1">
                           <p className="text-sm text-gray-900">
-                            <span className="font-medium">
-                              {isAdmin 
-                                ? (notification.sender?.name || 'Client') 
-                                : 'Admin'
-                              }
-                            </span> 
-                            {isAdmin && notification.type === 'payment' && ' reported payment'}
-                            {isAdmin && notification.type === 'meeting' && ' requested meeting'}
-                            {!isAdmin && ' sent a notification'}
+                            <span className="font-medium">Admin</span> sent a notification
                           </p>
                           <p className="text-sm text-gray-700 mt-1 bg-gray-50 p-2 rounded-md">
                             "{notification.message}"
                           </p>
                           <p className="text-xs text-gray-500 mt-2">{notification.title} • {timeString}</p>
-                          {isAdmin && notification.actionUrl && (
-                            <Link 
-                              to={notification.actionUrl}
-                              className="inline-flex items-center text-xs text-amber-600 hover:text-amber-500 mt-2"
-                            >
-                              {notification.actionText || 'View'} →
-                            </Link>
-                          )}
                         </div>
                       </div>
                     );

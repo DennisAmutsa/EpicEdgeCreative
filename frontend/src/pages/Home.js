@@ -284,7 +284,7 @@ const Home = () => {
                         </span>
                       ))}
                     </div>
-
+                    
                   </div>
                 </div>
               );
@@ -381,15 +381,15 @@ const Home = () => {
                                         {project.technologies && project.technologies.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-3">
                         {project.technologies.slice(0, 3).map((tech, techIndex) => (
-                          <span 
-                            key={techIndex}
+                        <span 
+                          key={techIndex}
                             className="px-2 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-full text-xs font-medium group-hover:from-amber-100 group-hover:to-yellow-100 group-hover:text-amber-800 transition-all duration-300 border border-gray-200 group-hover:border-amber-200"
-                            style={{ transitionDelay: `${techIndex * 50}ms` }}
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
+                          style={{ transitionDelay: `${techIndex * 50}ms` }}
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
                     )}
                   
                     {/* Compact project button */}
@@ -516,8 +516,8 @@ const Home = () => {
                     <div className="flex items-center">
                       <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-md">
                         <span className="text-white font-bold text-sm">
-                          {testimonial.name.charAt(0)}
-                        </span>
+                            {testimonial.name.charAt(0)}
+                          </span>
                       </div>
                       <div className="ml-3">
                         <div className="text-sm font-bold text-gray-900">
@@ -532,7 +532,7 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
-
+                  
                 </div>
               </div>
             ))}

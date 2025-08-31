@@ -186,7 +186,7 @@ router.post('/', authenticateToken, requireAdmin, [
     const subtotal = amount;
     const taxAmount = subtotal * (taxRateValue / 100);
     const total = subtotal + taxAmount;
-
+    
     const invoice = new Invoice({
       invoiceNumber: invoiceNumber,
       client: project.client._id,
