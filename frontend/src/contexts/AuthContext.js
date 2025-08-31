@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 const AuthContext = createContext();
 
 // Configure axios defaults
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://api.epicedgecreative.com';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://epicedgecreative.onrender.com';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
