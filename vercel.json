@@ -4,7 +4,6 @@
   "outputDirectory": "frontend/build",
   "installCommand": "pnpm install",
   "framework": null,
-  "functions": {},
   "rewrites": [
     {
       "source": "/(.*)",
