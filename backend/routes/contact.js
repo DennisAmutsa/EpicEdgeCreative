@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Contact = require('../models/Contact');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { sendPushNotificationToMultiple, createNotificationPayload } = require('../services/pushNotification');
+const PushSubscription = require('../models/PushSubscription');
+const User = require('../models/User');
 
 // Email configuration (using nodemailer with Gmail)
 const nodemailer = require('nodemailer');
@@ -233,6 +236,37 @@ router.post('/', async (req, res) => {
         console.error('Error sending emails:', emailError);
         // Don't fail the request if email fails
       }
+    }
+
+    // Send push notifications to all admins for any contact form submission
+    try {
+      const admins = await User.find({ role: 'admin' }).select('_id');
+      
+      if (admins.length > 0) {
+        const adminIds = admins.map(admin => admin._id);
+        const pushSubscriptions = await PushSubscription.find({
+          userId: { $in: adminIds },
+          isActive: true
+        });
+
+        if (pushSubscriptions.length > 0) {
+          const payload = createNotificationPayload(
+            `New Contact Form: ${subject}`,
+            `${firstName} ${lastName} from ${company || 'No Company'} submitted a contact form`,
+            {
+              url: '/admin/contacts',
+              type: 'contact',
+              priority: subject === 'callback-request' ? 'high' : 'medium'
+            }
+          );
+
+          const pushResults = await sendPushNotificationToMultiple(pushSubscriptions, payload);
+          console.log(`Contact form push notifications sent to admins: ${pushResults.filter(r => r.success).length}/${pushResults.length} successful`);
+        }
+      }
+    } catch (pushError) {
+      console.error('Error sending contact form push notifications:', pushError);
+      // Don't fail the main request if push notifications fail
     }
 
     res.status(201).json({

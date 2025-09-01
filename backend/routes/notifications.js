@@ -3,6 +3,8 @@ const { body, validationResult } = require('express-validator');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { sendPushNotificationToMultiple, createNotificationPayload } = require('../services/pushNotification');
+const PushSubscription = require('../models/PushSubscription');
 
 const router = express.Router();
 
@@ -176,6 +178,29 @@ router.post('/', authenticateToken, requireAdmin, [
       validRecipients.map(user => user._id),
       notificationData
     );
+
+    // Automatically send push notifications to all recipients
+    try {
+      const recipientIds = validRecipients.map(user => user._id);
+      const pushSubscriptions = await PushSubscription.find({
+        userId: { $in: recipientIds },
+        isActive: true
+      });
+
+      if (pushSubscriptions.length > 0) {
+        const payload = createNotificationPayload(title, message, {
+          url: actionUrl || '/notifications',
+          type,
+          priority
+        });
+
+        const pushResults = await sendPushNotificationToMultiple(pushSubscriptions, payload);
+        console.log(`Push notifications sent: ${pushResults.filter(r => r.success).length}/${pushResults.length} successful`);
+      }
+    } catch (pushError) {
+      console.error('Error sending push notifications:', pushError);
+      // Don't fail the main request if push notifications fail
+    }
     
     res.status(201).json({
       success: true,
@@ -243,6 +268,29 @@ router.post('/callback', [
     console.log('Creating callback notifications:', notifications.length);
     
     await Notification.insertMany(notifications);
+    
+    // Automatically send push notifications to all admins
+    try {
+      const adminIds = admins.map(admin => admin._id);
+      const pushSubscriptions = await PushSubscription.find({
+        userId: { $in: adminIds },
+        isActive: true
+      });
+
+      if (pushSubscriptions.length > 0) {
+        const payload = createNotificationPayload(title, message, {
+          url: '/notifications',
+          type: 'callback',
+          priority: 'high'
+        });
+
+        const pushResults = await sendPushNotificationToMultiple(pushSubscriptions, payload);
+        console.log(`Callback push notifications sent to admins: ${pushResults.filter(r => r.success).length}/${pushResults.length} successful`);
+      }
+    } catch (pushError) {
+      console.error('Error sending callback push notifications:', pushError);
+      // Don't fail the main request if push notifications fail
+    }
     
     console.log('Callback notifications created successfully');
     
@@ -484,6 +532,29 @@ router.post('/broadcast', authenticateToken, requireAdmin, [
       clients.map(client => client._id),
       notificationData
     );
+
+    // Automatically send push notifications to all clients
+    try {
+      const clientIds = clients.map(client => client._id);
+      const pushSubscriptions = await PushSubscription.find({
+        userId: { $in: clientIds },
+        isActive: true
+      });
+
+      if (pushSubscriptions.length > 0) {
+        const payload = createNotificationPayload(title, message, {
+          url: actionUrl || '/notifications',
+          type,
+          priority
+        });
+
+        const pushResults = await sendPushNotificationToMultiple(pushSubscriptions, payload);
+        console.log(`Broadcast push notifications sent: ${pushResults.filter(r => r.success).length}/${pushResults.length} successful`);
+      }
+    } catch (pushError) {
+      console.error('Error sending broadcast push notifications:', pushError);
+      // Don't fail the main request if push notifications fail
+    }
     
     res.status(201).json({
       success: true,
