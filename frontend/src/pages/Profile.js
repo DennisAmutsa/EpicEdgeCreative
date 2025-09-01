@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
 import { 
   User, 
   Mail, 
@@ -29,6 +30,10 @@ import { usePushNotifications } from '../hooks/usePushNotifications';
 const Profile = () => {
   const { user, updateProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const { isSupported, isSubscribed, loading, subscribeToNotifications, unsubscribeFromNotifications } = usePushNotifications();
 
   const {
@@ -59,6 +64,27 @@ const Profile = () => {
     } catch (error) {
       setError('root', { message: 'An unexpected error occurred' });
       toast.error('An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordChange = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.put('/api/auth/change-password', {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword
+      });
+      
+      if (response.data.success) {
+        toast.success('Password changed successfully!');
+        setShowPasswordModal(false);
+      } else {
+        toast.error(response.data.message || 'Failed to change password');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to change password');
     } finally {
       setIsLoading(false);
     }
@@ -188,17 +214,29 @@ const Profile = () => {
                   Quick Actions
                 </h4>
                 <div className="space-y-3">
-                  <button className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">
-                    <Shield className="w-4 h-4 mr-3 text-gray-500" />
+                  <button 
+                    onClick={() => setShowSecurityModal(true)}
+                    className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-xl transition-colors group"
+                  >
+                    <Shield className="w-4 h-4 mr-3 text-gray-500 group-hover:text-amber-600 transition-colors" />
                     Security Settings
+                    <span className="ml-auto text-xs text-gray-400 group-hover:text-amber-600">Change Password</span>
                   </button>
-                  <button className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">
-                    <Globe className="w-4 h-4 mr-3 text-gray-500" />
+                  <button 
+                    onClick={() => setShowPrivacyModal(true)}
+                    className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-xl transition-colors group"
+                  >
+                    <Globe className="w-4 h-4 mr-3 text-gray-500 group-hover:text-amber-600 transition-colors" />
                     Privacy Preferences
+                    <span className="ml-auto text-xs text-gray-400 group-hover:text-amber-600">Manage Settings</span>
                   </button>
-                  <button className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">
-                    <Award className="w-4 h-4 mr-3 text-gray-500" />
+                  <button 
+                    onClick={() => setShowStatsModal(true)}
+                    className="w-full flex items-center px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-xl transition-colors group"
+                  >
+                    <Award className="w-4 h-4 mr-3 text-gray-500 group-hover:text-amber-600 transition-colors" />
                     Account Statistics
+                    <span className="ml-auto text-xs text-gray-400 group-hover:text-amber-600">View Stats</span>
                   </button>
                 </div>
               </div>
@@ -433,6 +471,273 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Security Settings Modal */}
+      {showSecurityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full mx-4 p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <Shield className="w-5 h-5 mr-2 text-amber-600" />
+                Security Settings
+              </h3>
+              <button 
+                onClick={() => setShowSecurityModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <button
+                onClick={() => {
+                  setShowSecurityModal(false);
+                  setShowPasswordModal(true);
+                }}
+                className="w-full flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-amber-300 hover:bg-amber-50 transition-colors group"
+              >
+                <Shield className="w-5 h-5 mr-3 text-gray-500 group-hover:text-amber-600" />
+                <div className="text-left">
+                  <h4 className="font-semibold text-gray-900">Change Password</h4>
+                  <p className="text-sm text-gray-600">Update your account password</p>
+                </div>
+              </button>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <Shield className="w-4 h-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <div className="text-sm text-blue-700">
+                    <p className="font-medium">Security Tips:</p>
+                    <ul className="mt-1 space-y-1 text-xs">
+                      <li>• Use a strong, unique password</li>
+                      <li>• Never share your password</li>
+                      <li>• Enable two-factor authentication if available</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full mx-4 p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <Shield className="w-5 h-5 mr-2 text-amber-600" />
+                Change Password
+              </h3>
+              <button 
+                onClick={() => setShowPasswordModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit(handlePasswordChange)} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  {...register('currentPassword', { required: 'Current password is required' })}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500"
+                  placeholder="Enter current password"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  {...register('newPassword', { 
+                    required: 'New password is required',
+                    minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                  })}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500"
+                  placeholder="Enter new password"
+                />
+              </div>
+              
+              <div className="flex items-center space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50"
+                >
+                  {isLoading ? 'Changing...' : 'Change Password'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Preferences Modal */}
+      {showPrivacyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full mx-4 p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <Globe className="w-5 h-5 mr-2 text-amber-600" />
+                Privacy Preferences
+              </h3>
+              <button 
+                onClick={() => setShowPrivacyModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Push Notifications</h4>
+                  <p className="text-sm text-gray-600">Receive project updates and alerts</p>
+                </div>
+                <div className="flex items-center">
+                  {isSubscribed ? (
+                    <span className="text-green-600 text-sm font-medium">Enabled</span>
+                  ) : (
+                    <span className="text-gray-500 text-sm">Disabled</span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Email Notifications</h4>
+                  <p className="text-sm text-gray-600">Receive email updates about your projects</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-green-600 text-sm font-medium">Enabled</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl">
+                <div>
+                  <h4 className="font-semibold text-gray-900">Profile Visibility</h4>
+                  <p className="text-sm text-gray-600">Control who can see your profile information</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-blue-600 text-sm font-medium">Team Only</span>
+                </div>
+              </div>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <Globe className="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <div className="text-sm text-green-700">
+                    <p className="font-medium">Your privacy is protected:</p>
+                    <ul className="mt-1 space-y-1 text-xs">
+                      <li>• We never share your personal data</li>
+                      <li>• All communications are encrypted</li>
+                      <li>• You control your notification preferences</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Account Statistics Modal */}
+      {showStatsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-lg w-full mx-4 p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <Award className="w-5 h-5 mr-2 text-amber-600" />
+                Account Statistics
+              </h3>
+              <button 
+                onClick={() => setShowStatsModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-600">Account Status</p>
+                    <p className="text-2xl font-bold text-blue-900">Active</p>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Check className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-green-600">Member Since</p>
+                    <p className="text-2xl font-bold text-green-900">
+                      {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'N/A'}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">Role</span>
+                <span className="text-sm font-medium text-gray-900 capitalize">{user?.role || 'Client'}</span>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">Company</span>
+                <span className="text-sm font-medium text-gray-900">{user?.company || 'Not specified'}</span>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">Last Updated</span>
+                <span className="text-sm font-medium text-gray-900">
+                  {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+            </div>
+            
+            <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <Award className="w-4 h-4 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
+                <div className="text-sm text-amber-700">
+                  <p className="font-medium">Account Overview:</p>
+                  <ul className="mt-1 space-y-1 text-xs">
+                    <li>• Your account is in good standing</li>
+                    <li>• All features are available to you</li>
+                    <li>• Contact support for any questions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
