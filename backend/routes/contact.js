@@ -90,7 +90,7 @@ const sendCallbackConfirmation = async (contactData) => {
             <div class="footer">
               <p><strong>📧 Email:</strong> epicedgecreative@gmail.com</p>
               <p><strong>📱 Phone:</strong> +254 787 205 456</p>
-              <p><strong>🌐 Website:</strong> www.epicedgecreative.com</p>
+              <p><strong>🌐 Website:</strong> <a href="https://epicedgecreative.vercel.app/" style="color: #d97706;">epicedgecreative.vercel.app</a></p>
               <p style="margin-top: 20px; font-size: 12px;">
                 This is an automated confirmation email. Please do not reply to this email.
               </p>
@@ -248,6 +248,9 @@ const sendAdminNotification = async (contactData) => {
             <div class="footer">
               <p style="margin-top: 20px; font-size: 12px;">
                 This is an automated notification from your website contact form.
+              </p>
+              <p style="margin-top: 10px; font-size: 12px;">
+                <strong>🌐 Website:</strong> <a href="https://epicedgecreative.vercel.app/" style="color: #d97706;">epicedgecreative.vercel.app</a>
               </p>
             </div>
           </div>
