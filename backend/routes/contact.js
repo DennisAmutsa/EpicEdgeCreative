@@ -110,6 +110,161 @@ const sendCallbackConfirmation = async (contactData) => {
   }
 };
 
+// Function to send admin notification email about new callback requests
+const sendAdminNotification = async (contactData) => {
+  try {
+    const transporter = createTransporter();
+    
+    const adminEmail = process.env.ADMIN_EMAIL || 'epicedgecreative@gmail.com';
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
+      to: adminEmail,
+      subject: `🔔 New Callback Request - ${contactData.firstName} ${contactData.lastName}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }
+            .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+            .footer { background: #f9fafb; padding: 20px; border-radius: 0 0 10px 10px; text-align: center; color: #6b7280; }
+            .highlight { background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; }
+            .button { display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 10px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🔔 New Callback Request!</h1>
+            </div>
+            <div class="content">
+              <h2>Hello Admin,</h2>
+              
+              <p>A new callback request has been submitted through your website!</p>
+              
+              <div class="highlight">
+                <h3>📋 Callback Request Details:</h3>
+                <p><strong>Name:</strong> ${contactData.firstName} ${contactData.lastName}</p>
+                <p><strong>Email:</strong> ${contactData.email}</p>
+                <p><strong>Company:</strong> ${contactData.company || 'Not specified'}</p>
+                <p><strong>Subject:</strong> ${contactData.subject}</p>
+                <p><strong>Message:</strong> ${contactData.message}</p>
+                <p><strong>Submitted:</strong> ${new Date(contactData.createdAt).toLocaleString()}</p>
+              </div>
+              
+              <h3>🚀 Action Required:</h3>
+              <ol>
+                <li><strong>Review:</strong> Check the request details above</li>
+                <li><strong>Prepare:</strong> Gather any necessary information for the call</li>
+                <li><strong>Call:</strong> Contact the client at their preferred time</li>
+                <li><strong>Update:</strong> Mark as 'replied' in your admin panel</li>
+              </ol>
+              
+              <p><strong>Client Contact:</strong> ${contactData.email} | ${contactData.phone || 'Phone not provided'}</p>
+              
+              <p>Best regards,<br>
+              <strong>EpicEdge Creative System</strong></p>
+            </div>
+            <div class="footer">
+              <p style="margin-top: 20px; font-size: 12px;">
+                This is an automated notification from your website contact form.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log('Admin notification email sent successfully to:', adminEmail);
+    return true;
+  } catch (error) {
+    console.error('Error sending admin notification email:', error);
+    return false;
+  }
+};
+
+// Function to send admin notification email about new callback requests
+const sendAdminNotification = async (contactData) => {
+  try {
+    const transporter = createTransporter();
+    
+    const adminEmail = process.env.ADMIN_EMAIL || 'epicedgecreative@gmail.com';
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
+      to: adminEmail,
+      subject: `🔔 New Callback Request - ${contactData.firstName} ${contactData.lastName}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }
+            .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+            .footer { background: #f9fafb; padding: 20px; border-radius: 0 0 10px 10px; text-align: center; color: #6b7280; }
+            .highlight { background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🔔 New Callback Request!</h1>
+            </div>
+            <div class="content">
+              <h2>Hello Admin,</h2>
+              
+              <p>A new callback request has been submitted through your website!</p>
+              
+              <div class="highlight">
+                <h3>📋 Callback Request Details:</h3>
+                <p><strong>Name:</strong> ${contactData.firstName} ${contactData.lastName}</p>
+                <p><strong>Email:</strong> ${contactData.email}</p>
+                <p><strong>Company:</strong> ${contactData.company || 'Not specified'}</p>
+                <p><strong>Subject:</strong> ${contactData.subject}</p>
+                <p><strong>Message:</strong> ${contactData.message}</p>
+                <p><strong>Submitted:</strong> ${new Date(contactData.createdAt).toLocaleString()}</p>
+              </div>
+              
+              <h3>🚀 Action Required:</h3>
+              <ol>
+                <li><strong>Review:</strong> Check the request details above</li>
+                <li><strong>Prepare:</strong> Gather any necessary information for the call</li>
+                <li><strong>Call:</strong> Contact the client at their preferred time</li>
+                <li><strong>Update:</strong> Mark as 'replied' in your admin panel</li>
+              </ol>
+              
+              <p><strong>Client Contact:</strong> ${contactData.email}</p>
+              
+              <p>Best regards,<br>
+              <strong>EpicEdge Creative System</strong></p>
+            </div>
+            <div class="footer">
+              <p style="margin-top: 20px; font-size: 12px;">
+                This is an automated notification from your website contact form.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log('Admin notification email sent successfully to:', adminEmail);
+    return true;
+  } catch (error) {
+    console.error('Error sending admin notification email:', error);
+    return false;
+  }
+};
+
 // @route   POST /api/contact
 // @desc    Submit contact form
 // @access  Public
@@ -140,11 +295,17 @@ router.post('/', async (req, res) => {
 
     // Send automatic confirmation email for callback requests
     let emailSent = false;
+    let adminNotified = false;
+    
     if (subject === 'callback-request') {
       try {
+        // Send confirmation to customer
         emailSent = await sendCallbackConfirmation(contact);
+        
+        // Send notification to admin
+        adminNotified = await sendAdminNotification(contact);
       } catch (emailError) {
-        console.error('Error sending callback confirmation:', emailError);
+        console.error('Error sending emails:', emailError);
         // Don't fail the request if email fails
       }
     }
