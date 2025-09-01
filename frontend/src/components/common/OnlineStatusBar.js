@@ -37,12 +37,6 @@ const OnlineStatusBar = () => {
           <span>{status.nairobiTime}</span>
         </div>
 
-        {/* Business Hours */}
-        <div className="flex items-center space-x-2 text-gray-300">
-          <Clock className="w-4 h-4" />
-          <span>{status.businessHours}</span>
-        </div>
-
         {/* Projects Completed */}
         <div className="flex items-center space-x-2 text-gray-300">
           <Users className="w-4 h-4" />
