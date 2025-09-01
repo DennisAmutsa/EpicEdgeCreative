@@ -100,12 +100,12 @@ const Footer = () => {
                 Company
                 <div className="absolute -bottom-1 left-0 w-4 h-0.5 bg-gradient-to-r from-amber-500 to-yellow-600"></div>
               </h4>
-              <ul className="space-y-1">
+              <ul className="flex flex-wrap gap-3">
                 {footerLinks.company.map((link, index) => (
                   <li key={index}>
                     <Link
                       to={link.href}
-                      className="text-gray-300 hover:text-amber-400 transition-colors duration-300 flex items-center gap-1 group text-xs"
+                      className="text-gray-300 hover:text-amber-400 transition-colors duration-300 flex items-center gap-1 group text-xs whitespace-nowrap"
                     >
                       <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
