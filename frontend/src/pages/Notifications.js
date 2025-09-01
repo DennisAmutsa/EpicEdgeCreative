@@ -224,22 +224,24 @@ const Notifications = () => {
         url="/notifications"
       />
       
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 px-4 sm:px-0">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Bell className="w-7 h-7 mr-3 text-amber-600" />
-              Notifications
+            <h1 className="text-2xl font-bold text-gray-900 flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0">
+              <div className="flex items-center">
+                <Bell className="w-7 h-7 mr-3 text-amber-600" />
+                Notifications
+              </div>
               {unreadCount > 0 && (
-                <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                <span className="ml-0 sm:ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
                   {unreadCount} unread
                 </span>
               )}
             </h1>
             <p className="text-gray-600">Stay updated with your project activities and important updates</p>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 lg:gap-3">
             {selectedNotifications.length > 0 && (
               <>
                 <button
@@ -274,9 +276,12 @@ const Notifications = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center space-x-4">
-            <Filter className="w-5 h-5 text-amber-600" />
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="flex items-center">
+              <Filter className="w-5 h-5 text-amber-600 mr-2" />
+              <span className="text-sm font-medium text-gray-700">Filters:</span>
+            </div>
             <div className="flex flex-wrap gap-2">
               {[
                 { key: 'all', label: 'All', count: notifications.length },
@@ -309,12 +314,12 @@ const Notifications = () => {
               filteredNotifications.map((notification) => (
                 <div
                   key={notification._id}
-                  className={`p-6 border-l-4 ${getPriorityColor(notification.priority)} ${
+                  className={`p-4 sm:p-6 border-l-4 ${getPriorityColor(notification.priority)} ${
                     notification.isRead ? 'opacity-75' : ''
                   } hover:bg-gray-50 transition-colors cursor-pointer`}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <div className="flex items-start space-x-4">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
                     <input
                       type="checkbox"
                       checked={selectedNotifications.includes(notification._id)}
@@ -322,56 +327,58 @@ const Notifications = () => {
                         e.stopPropagation();
                         handleSelectNotification(notification._id);
                       }}
-                      className="mt-1 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                      className="mt-1 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded flex-shrink-0"
                     />
                     <div className="flex-shrink-0 mt-1">
                       {getNotificationIcon(notification.type, notification.priority)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
+                      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-3 lg:space-y-0">
                         <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <p className="text-lg font-semibold text-gray-900">
+                          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
+                            <p className="text-base sm:text-lg font-semibold text-gray-900">
                               {notification.title}
                             </p>
-                            {getPriorityBadge(notification.priority)}
-                            {!notification.isRead && (
-                              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                            )}
+                            <div className="flex items-center space-x-2">
+                              {getPriorityBadge(notification.priority)}
+                              {!notification.isRead && (
+                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                              )}
+                            </div>
                           </div>
-                          <p className="text-gray-700 leading-relaxed">{notification.message}</p>
+                          <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{notification.message}</p>
                           
-                          <div className="mt-4 flex items-center space-x-4">
-                            <span className="text-sm text-gray-500 flex items-center">
-                              <Clock className="w-4 h-4 mr-1" />
+                          <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                            <span className="text-xs sm:text-sm text-gray-500 flex items-center">
+                              <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                               {formatDate(notification.createdAt)}
                             </span>
                             
                             {notification.sender && (
-                              <span className="text-sm text-gray-500">
+                              <span className="text-xs sm:text-sm text-gray-500">
                                 From: {notification.sender.name}
                               </span>
                             )}
                             
                             {notification.relatedProject && (
-                              <span className="text-sm text-amber-600 font-medium flex items-center">
-                                <FolderOpen className="w-4 h-4 mr-1" />
+                              <span className="text-xs sm:text-sm text-amber-600 font-medium flex items-center">
+                                <FolderOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                 {notification.relatedProject.title}
                               </span>
                             )}
                           </div>
                           
                           {notification.actionUrl && notification.actionText && (
-                            <div className="mt-3">
-                              <button className="inline-flex items-center text-sm text-amber-600 hover:text-amber-700 font-medium">
-                                <ExternalLink className="w-4 h-4 mr-1" />
+                            <div className="mt-2 sm:mt-3">
+                              <button className="inline-flex items-center text-xs sm:text-sm text-amber-600 hover:text-amber-700 font-medium">
+                                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                 {notification.actionText}
                               </button>
                             </div>
                           )}
                         </div>
                         
-                        <div className="flex items-center space-x-2 ml-4">
+                        <div className="flex items-center justify-end space-x-2 lg:ml-4">
                           {!notification.isRead && (
                             <button
                               onClick={(e) => {
@@ -415,16 +422,16 @@ const Notifications = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <AlertCircle className="h-8 w-8 text-red-600" />
+                <AlertCircle className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
               </div>
-              <div className="ml-5 w-0 flex-1">
+              <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">High Priority</dt>
-                  <dd className="text-xl font-bold text-gray-900">
+                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">High Priority</dt>
+                  <dd className="text-lg sm:text-xl font-bold text-gray-900">
                     {notifications.filter(n => ['high', 'urgent'].includes(n.priority)).length}
                   </dd>
                 </dl>
@@ -432,15 +439,15 @@ const Notifications = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <FolderOpen className="h-8 w-8 text-blue-600" />
+                <FolderOpen className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
               </div>
-              <div className="ml-5 w-0 flex-1">
+              <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Project Updates</dt>
-                  <dd className="text-xl font-bold text-gray-900">
+                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">Project Updates</dt>
+                  <dd className="text-lg sm:text-xl font-bold text-gray-900">
                     {notifications.filter(n => n.type === 'project_update').length}
                   </dd>
                 </dl>
@@ -448,15 +455,15 @@ const Notifications = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <MessageSquare className="h-8 w-8 text-indigo-600" />
+                <MessageSquare className="h-6 w-6 sm:h-8 sm:w-8 text-indigo-600" />
               </div>
-              <div className="ml-5 w-0 flex-1">
+              <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Messages</dt>
-                  <dd className="text-xl font-bold text-gray-900">
+                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">Messages</dt>
+                  <dd className="text-lg sm:text-xl font-bold text-gray-900">
                     {notifications.filter(n => n.type === 'message').length}
                   </dd>
                 </dl>
@@ -464,15 +471,15 @@ const Notifications = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <DollarSign className="h-8 w-8 text-green-600" />
+                <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
               </div>
-              <div className="ml-5 w-0 flex-1">
+              <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Billing</dt>
-                  <dd className="text-xl font-bold text-gray-900">
+                  <dt className="text-xs sm:text-sm font-medium text-gray-500 truncate">Billing</dt>
+                  <dd className="text-lg sm:text-xl font-bold text-gray-900">
                     {notifications.filter(n => n.type === 'payment').length}
                   </dd>
                 </dl>
