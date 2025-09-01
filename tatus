@@ -1,0 +1,14 @@
+warning: in the working copy of 'frontend/src/contexts/AuthContext.js', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/frontend/src/contexts/AuthContext.js b/frontend/src/contexts/AuthContext.js[m
+[1mindex d5e6289..33df5db 100644[m
+[1m--- a/frontend/src/contexts/AuthContext.js[m
+[1m+++ b/frontend/src/contexts/AuthContext.js[m
+[36m@@ -5,7 +5,7 @@[m [mimport toast from 'react-hot-toast';[m
+ const AuthContext = createContext();[m
+ [m
+ // Configure axios defaults[m
+[31m-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://epicedgecreative.onrender.com';[m
+[32m+[m[32maxios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https:epicedgecreative.onrender.com';[m
+ [m
+ export const useAuth = () => {[m
+   const context = useContext(AuthContext);[m

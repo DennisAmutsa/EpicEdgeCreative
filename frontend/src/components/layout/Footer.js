@@ -1,35 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Facebook, 
-  Instagram, 
   Linkedin, 
   Mail, 
   Phone, 
   MapPin,
   Code,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    services: [
-      { name: 'Web Development', href: '/services#web-development' },
-      { name: 'Mobile Apps', href: '/services#mobile-apps' },
-      { name: 'Database Integration', href: '/services#database' },
-      { name: 'Virtual Assistance', href: '/services#virtual-assistance' },
-      { name: 'Educational Support', href: '/services#educational' },
-      { name: 'Digital Solutions', href: '/services#digital-solutions' }
-    ],
     company: [
       { name: 'About Us', href: '/about' },
       { name: 'Portfolio', href: '/portfolio' },
-      { name: 'Testimonials', href: '/testimonials' },
-      { name: 'Our Process', href: '/about#process' },
-      { name: 'Careers', href: '/contact' },
       { name: 'Contact', href: '/contact' }
     ],
 
@@ -42,8 +28,6 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: 'https://facebook.com/epicedgecreative', label: 'Facebook' },
-    { icon: Instagram, href: 'https://instagram.com/epic.edgecreative', label: 'Instagram' },
     { icon: Linkedin, href: 'https://linkedin.com/company/epicedgecreative', label: 'LinkedIn' }
   ];
 
@@ -55,27 +39,27 @@ const Footer = () => {
       
       <div className="relative z-10">
         {/* Main footer content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
             
             {/* Company Info */}
             <div className="xl:col-span-2">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg flex items-center justify-center">
-                  <Code className="w-4 h-4 text-white" />
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg flex items-center justify-center">
+                  <Code className="w-3 h-3 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">EpicEdge Creative</h3>
+                  <h3 className="text-base font-bold text-white">EpicEdge Creative</h3>
                   <p className="text-amber-400 text-xs font-medium">Software Engineering Excellence</p>
                 </div>
               </div>
               
-              <p className="text-gray-300 mb-3 leading-relaxed text-xs">
+              <p className="text-gray-300 mb-2 leading-relaxed text-xs">
                 Empowering businesses with innovative software solutions.
               </p>
               
               {/* Contact Info */}
-              <div className="space-y-1 mb-3">
+              <div className="space-y-1 mb-2">
                 <div className="flex items-center gap-2 text-gray-300 text-xs">
                   <Phone className="w-3 h-3 text-amber-400" />
                   <span>+254787205456</span>
@@ -99,43 +83,24 @@ const Footer = () => {
                       key={index}
                       href={social.href}
                       aria-label={social.label}
-                      className="w-7 h-7 bg-gray-800 hover:bg-gradient-to-br hover:from-amber-500 hover:to-yellow-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"
+                      className="w-6 h-6 bg-gray-800 hover:bg-gradient-to-br hover:from-amber-500 hover:to-yellow-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"
                     >
-                      <Icon className="w-3 h-3" />
+                      <Icon className="w-2.5 h-2.5" />
                     </a>
                   );
                 })}
               </div>
             </div>
             
-            {/* Services */}
-            <div>
-              <h4 className="text-sm font-bold text-white mb-2 relative">
-                Services
-                <div className="absolute -bottom-1 left-0 w-4 h-0.5 bg-gradient-to-r from-amber-500 to-yellow-600"></div>
-              </h4>
-              <ul className="space-y-1">
-                {footerLinks.services.map((link, index) => (
-                  <li key={index}>
-                    <Link
-                      to={link.href}
-                      className="text-gray-300 hover:text-amber-400 transition-colors duration-300 flex items-center gap-1 group text-xs"
-                    >
-                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+
             
             {/* Company */}
             <div>
-              <h4 className="text-base font-bold text-white mb-4 relative">
+              <h4 className="text-sm font-bold text-white mb-2 relative">
                 Company
-                <div className="absolute -bottom-1 left-0 w-6 h-0.5 bg-gradient-to-r from-amber-500 to-yellow-600"></div>
+                <div className="absolute -bottom-1 left-0 w-4 h-0.5 bg-gradient-to-r from-amber-500 to-yellow-600"></div>
               </h4>
-              <ul className="space-y-2">
+              <ul className="space-y-1">
                 {footerLinks.company.map((link, index) => (
                   <li key={index}>
                     <Link
@@ -156,15 +121,13 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-              <div className="flex flex-col sm:flex-row items-center gap-3 text-gray-300 text-xs">
-                <p>
-                  © {currentYear} EpicEdge Creative. All rights reserved.
-                </p>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+              <div className="text-gray-300 text-xs">
+                <p>© {currentYear} EpicEdge Creative. All rights reserved.</p>
               </div>
               
-              <div className="flex flex-wrap gap-4 text-xs">
+              <div className="flex gap-4 text-xs">
                 {footerLinks.legal.map((link, index) => (
                   <Link
                     key={index}
