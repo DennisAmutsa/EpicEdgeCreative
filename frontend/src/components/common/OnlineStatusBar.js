@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Globe, Users, Zap, AlertCircle, Bug } from 'lucide-react';
-import { getOnlineStatus, getNextBusinessDay, testTimeCalculations } from '../../utils/onlineStatus';
+import { Clock, Globe, Users, Zap, AlertCircle } from 'lucide-react';
+import { getOnlineStatus, getNextBusinessDay } from '../../utils/onlineStatus';
 
 const OnlineStatusBar = () => {
   const [status, setStatus] = useState(getOnlineStatus());
@@ -15,10 +15,6 @@ const OnlineStatusBar = () => {
 
     return () => clearInterval(interval);
   }, []);
-
-  const handleTestTime = () => {
-    testTimeCalculations();
-  };
 
   return (
     <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-3 px-4">
@@ -59,29 +55,15 @@ const OnlineStatusBar = () => {
           <span>4+ Years</span>
         </div>
 
-        {/* Status Change Info */}
-        <div className="flex items-center space-x-2 text-gray-300">
-          <AlertCircle className="w-4 h-4" />
-          <span className="text-xs">
-            {status.isOnline ? (
-              <span className="text-yellow-300">{status.timeUntilNextChange}</span>
-            ) : (
-              <span className="text-blue-300">
-                Back online {nextBusinessDay} at 9:00 AM
-              </span>
-            )}
-          </span>
-        </div>
-
-        {/* Temporary Test Button - Remove after debugging */}
-        <button
-          onClick={handleTestTime}
-          className="flex items-center space-x-1 text-xs text-gray-400 hover:text-white transition-colors"
-          title="Test Time Calculations"
-        >
-          <Bug className="w-3 h-3" />
-          <span>Test</span>
-        </button>
+        {/* Status Change Info - Only show when online */}
+        {status.isOnline && (
+          <div className="flex items-center space-x-2 text-gray-300">
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-xs text-yellow-300">
+              {status.timeUntilNextChange}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
