@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import SEOHead from '../components/common/SEOHead';
+import OnlineStatusBar from '../components/common/OnlineStatusBar';
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
@@ -207,7 +208,11 @@ const Home = () => {
         url="/"
         structuredData={homeStructuredData}
       />
-            {/* Hero Section - Responsive across all platforms */}
+      
+      {/* Online Status Bar */}
+      <OnlineStatusBar />
+      
+      {/* Hero Section - Responsive across all platforms */}
       <div className="relative overflow-hidden h-[40vh] sm:h-[45vh] md:h-[50vh] lg:h-[45vh] xl:h-[50vh]">
         {/* Full-width background image covering entire hero section */}
         <div 

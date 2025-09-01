@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import SEOHead from '../components/common/SEOHead';
+import OnlineStatusBar from '../components/common/OnlineStatusBar';
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -323,6 +324,9 @@ Message: ${callbackRequest.message || 'No additional message'}`
         url="/contact"
         structuredData={contactStructuredData}
       />
+      
+      {/* Online Status Bar */}
+      <OnlineStatusBar />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-yellow-50 to-white py-32 min-h-screen flex items-center">
