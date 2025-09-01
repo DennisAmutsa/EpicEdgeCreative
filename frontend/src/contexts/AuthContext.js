@@ -5,7 +5,14 @@ import toast from 'react-hot-toast';
 const AuthContext = createContext();
 
 // Configure axios defaults
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://epicedgecreative.onrender.com';
+// Auto-detect environment and set appropriate API URL
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const defaultApiUrl = isLocalhost ? 'http://localhost:5000' : 'https://epicedgecreative.onrender.com';
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || defaultApiUrl;
+
+console.log('🌐 API URL:', axios.defaults.baseURL);
+console.log('🏠 Environment:', isLocalhost ? 'Local Development' : 'Production');
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
