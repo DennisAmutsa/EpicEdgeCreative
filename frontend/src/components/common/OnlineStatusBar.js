@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Globe, Users, Zap, AlertCircle } from 'lucide-react';
-import { getOnlineStatus, getNextBusinessDay } from '../../utils/onlineStatus';
+import { Globe } from 'lucide-react';
+import { getOnlineStatus } from '../../utils/onlineStatus';
 
 const OnlineStatusBar = () => {
   const [status, setStatus] = useState(getOnlineStatus());
-  const [nextBusinessDay, setNextBusinessDay] = useState(getNextBusinessDay());
 
   // Update status every minute
   useEffect(() => {
     const interval = setInterval(() => {
       setStatus(getOnlineStatus());
-      setNextBusinessDay(getNextBusinessDay());
     }, 60000); // Update every minute
 
     return () => clearInterval(interval);
@@ -36,28 +34,6 @@ const OnlineStatusBar = () => {
           <Globe className="w-4 h-4" />
           <span>{status.nairobiTime}</span>
         </div>
-
-        {/* Projects Completed */}
-        <div className="flex items-center space-x-2 text-gray-300">
-          <Users className="w-4 h-4" />
-          <span>100+ Projects</span>
-        </div>
-
-        {/* Years of Experience */}
-        <div className="flex items-center space-x-2 text-gray-300">
-          <Zap className="w-4 h-4" />
-          <span>4+ Years</span>
-        </div>
-
-        {/* Status Change Info - Only show when online */}
-        {status.isOnline && (
-          <div className="flex items-center space-x-2 text-gray-300">
-            <AlertCircle className="w-4 h-4" />
-            <span className="text-xs text-yellow-300">
-              {status.timeUntilNextChange}
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
