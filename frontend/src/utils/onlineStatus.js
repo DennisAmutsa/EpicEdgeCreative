@@ -1,11 +1,33 @@
 // Utility function to determine online/offline status based on Nairobi time
 export const getOnlineStatus = () => {
-  // Get current time in Nairobi (UTC+3)
+  // Get current time in Nairobi using proper timezone
   const nairobiTime = new Date();
-  nairobiTime.setUTCHours(nairobiTime.getUTCHours() + 3);
   
-  const currentHour = nairobiTime.getHours();
-  const currentMinute = nairobiTime.getMinutes();
+  // Get Nairobi time using proper timezone conversion
+  const nairobiTimeString = nairobiTime.toLocaleTimeString('en-US', {
+    timeZone: 'Africa/Nairobi',
+    hour12: true,
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  // Extract hour and minute from the formatted time string
+  const timeMatch = nairobiTimeString.match(/(\d+):(\d+)\s*(AM|PM)/);
+  let currentHour = 0;
+  let currentMinute = 0;
+  
+  if (timeMatch) {
+    currentHour = parseInt(timeMatch[1]);
+    currentMinute = parseInt(timeMatch[2]);
+    const period = timeMatch[3];
+    
+    // Convert to 24-hour format for business logic
+    if (period === 'PM' && currentHour !== 12) {
+      currentHour += 12;
+    } else if (period === 'AM' && currentHour === 12) {
+      currentHour = 0;
+    }
+  }
   
   // Business hours: 9:00 AM to 6:00 PM (Nairobi time)
   const businessStart = 9; // 9:00 AM
@@ -57,14 +79,6 @@ export const getOnlineStatus = () => {
     nextStatus = 'online';
   }
   
-  // Get current Nairobi time string
-  const nairobiTimeString = nairobiTime.toLocaleTimeString('en-US', {
-    timeZone: 'Africa/Nairobi',
-    hour12: true,
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-  
   // Get response time based on status
   const responseTime = isOnline ? '2-4 hours' : 'Next business day';
   
@@ -75,7 +89,8 @@ export const getOnlineStatus = () => {
     businessStart,
     businessEnd,
     isOnline,
-    nairobiTimeString
+    nairobiTimeString,
+    rawTime: nairobiTime.toLocaleTimeString('en-US', { timeZone: 'Africa/Nairobi' })
   });
   
   return {
