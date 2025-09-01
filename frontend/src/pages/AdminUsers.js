@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import SEOHead from '../components/common/SEOHead';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { NotificationSender } from '../components/admin/NotificationSender';
 
 const AdminUsers = () => {
   const queryClient = useQueryClient();
@@ -436,6 +437,15 @@ const AdminUsers = () => {
                               <Edit2 className="w-4 h-4 text-amber-600" />
                             </button>
 
+                            {/* Send Notification */}
+                            <button
+                              onClick={() => setSelectedUser(user)}
+                              className="p-1 rounded hover:bg-gray-100 transition-colors"
+                              title="Send notification"
+                            >
+                              <Mail className="w-4 h-4 text-blue-600" />
+                            </button>
+
                             {/* Delete */}
                             <button
                               onClick={() => handleDeleteClick(user)}
@@ -777,9 +787,31 @@ const AdminUsers = () => {
               >
                 {deleteUserMutation.isLoading ? 'Deleting...' : 'Delete'}
               </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* Notification Modal */}
+      {selectedUser && !showEditModal && !showDeleteModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Send Notification</h3>
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <NotificationSender 
+              userId={selectedUser._id} 
+              userName={selectedUser.name} 
+            />
+          </div>
+        </div>
       )}
     </>
   );

@@ -17,15 +17,19 @@ import {
   X,
   Settings,
   Award,
-  Briefcase
+  Briefcase,
+  Bell,
+  BellOff
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import SEOHead from '../components/common/SEOHead';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { isSupported, isSubscribed, loading, subscribeToNotifications, unsubscribeFromNotifications } = usePushNotifications();
 
   const {
     register,
@@ -308,7 +312,48 @@ const Profile = () => {
                         Role is managed by administrators
                       </p>
                     </div>
-                </div>
+                  </div>
+
+                  {/* Push Notifications Section */}
+                  {isSupported && (
+                    <div className="mb-8">
+                      <label className="flex items-center text-sm font-bold text-gray-800 mb-3">
+                        <Bell className="w-4 h-4 mr-2 text-amber-600" />
+                        Push Notifications
+                      </label>
+                      <div className="flex items-center justify-between p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                        <div>
+                          <p className="text-sm text-gray-600 mb-2">
+                            Receive notifications about your projects and updates
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {isSubscribed ? 'Currently subscribed to notifications' : 'Click subscribe to enable notifications'}
+                          </p>
+                        </div>
+                        <button
+                          onClick={isSubscribed ? unsubscribeFromNotifications : subscribeToNotifications}
+                          disabled={loading}
+                          className={`px-6 py-3 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 ${
+                            isSubscribed
+                              ? 'bg-red-600 hover:bg-red-700 text-white'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          {loading ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              <span>Loading...</span>
+                            </>
+                          ) : (
+                            <>
+                              {isSubscribed ? <BellOff className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                              <span>{isSubscribed ? 'Unsubscribe' : 'Subscribe'}</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between pt-8 border-t-2 border-gray-100">
                   <button
