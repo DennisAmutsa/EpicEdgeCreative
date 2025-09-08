@@ -131,9 +131,9 @@ const Contact = () => {
     },
     {
       icon: PlayCircle,
-      title: "Watch Demo",
-      description: "See our process",
-      action: () => toast.success('Demo video coming soon!'),
+      title: "Case Studies",
+      description: "See our work",
+      action: () => window.open('/portfolio', '_blank'),
       color: "from-purple-500 to-pink-600"
     }
   ];
