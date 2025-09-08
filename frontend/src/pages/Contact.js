@@ -131,9 +131,9 @@ const Contact = () => {
     },
     {
       icon: PlayCircle,
-      title: "Case Studies",
-      description: "See our work",
-      action: () => window.open('/portfolio', '_blank'),
+      title: "View Services",
+      description: "Explore our offerings",
+      action: () => window.open('/services', '_blank'),
       color: "from-purple-500 to-pink-600"
     }
   ];
