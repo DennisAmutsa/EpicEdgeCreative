@@ -29,8 +29,8 @@ export const getOnlineStatus = () => {
     }
   }
   
-  // Business hours: 9:00 AM to 6:00 PM (Nairobi time)
-  const businessStart = 9; // 9:00 AM
+  // Business hours: 8:00 AM to 6:00 PM (Nairobi time)
+  const businessStart = 8; // 8:00 AM
   const businessEnd = 18;  // 6:00 PM
   
   // Check if current time is within business hours
@@ -55,15 +55,15 @@ export const getOnlineStatus = () => {
     }
     nextStatus = 'offline';
   } else {
-    // Currently offline, calculate time until online (9:00 AM)
+    // Currently offline, calculate time until online (8:00 AM)
     let hoursUntilOnline = 0;
     let minutesUntilOnline = 0;
     
     if (currentHour >= businessEnd) {
-      // After 6 PM, calculate until next day 9 AM
+      // After 6 PM, calculate until next day 8 AM
       hoursUntilOnline = (24 - currentHour) + businessStart;
     } else {
-      // Before 9 AM, calculate until 9 AM today
+      // Before 8 AM, calculate until 8 AM today
       hoursUntilOnline = businessStart - currentHour;
     }
     
@@ -102,7 +102,7 @@ export const getOnlineStatus = () => {
     nairobiTime: `Nairobi Time: ${nairobiTimeString}`,
     timeUntilNextChange,
     nextStatus,
-    businessHours: '9:00 AM - 6:00 PM (Nairobi Time)'
+    businessHours: '8:00 AM - 6:00 PM (Nairobi Time)'
   };
 };
 

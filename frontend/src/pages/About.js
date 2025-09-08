@@ -239,7 +239,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             <div className="animate-slide-up">
               <div className="bg-gradient-to-br from-amber-50 to-yellow-50 p-8 rounded-3xl border border-amber-200 shadow-lg">
                 <div className="flex items-center mb-6">
@@ -279,10 +279,8 @@ const About = () => {
                 </p>
               </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="animate-slide-up order-2 lg:order-1">
+            <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-3xl border border-green-200 shadow-lg">
                 <div className="flex items-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mr-4">
@@ -300,38 +298,40 @@ const About = () => {
                 </p>
               </div>
             </div>
+          </div>
 
-            <div className="animate-slide-up order-1 lg:order-2" style={{ animationDelay: '0.2s' }}>
-              <div className="space-y-6 text-gray-600 leading-relaxed">
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                  <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                    <Heart className="w-6 h-6 text-red-500 mr-3" />
-                    What Drives Us
-                  </h4>
-                  <p className="mb-4">
-                    We believe that behind every website, every app, every digital solution, 
-                    there's a human story. Someone's dream to start a business, a student's 
-                    ambition to excel, or an organization's mission to serve better.
-                  </p>
-                  <p>
-                    That's why we don't just write code - we craft experiences. We don't just 
-                    build websites - we create digital homes for brands. We don't just provide 
-                    services - we build lasting partnerships.
-                  </p>
-                </div>
-                
-                <div className="bg-gradient-to-r from-amber-500 to-yellow-600 p-6 rounded-2xl text-white shadow-lg">
-                  <h4 className="text-xl font-bold mb-4 flex items-center">
-                    <Target className="w-6 h-6 mr-3" />
-                    Our Promise
-                  </h4>
-                  <p>
-                    "Every line of code we write, every design we create, every solution we deliver 
-                    carries our commitment to excellence and our passion for helping you succeed. 
-                    Your success is our success."
-                  </p>
-                  <p className="text-sm mt-4 text-amber-100 font-medium">- Dennis Amutsa, Founder</p>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center mt-8">
+            <div className="animate-slide-up">
+              <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                  <Heart className="w-6 h-6 text-red-500 mr-3" />
+                  What Drives Us
+                </h4>
+                <p className="mb-4 text-gray-600 leading-relaxed">
+                  We believe that behind every website, every app, every digital solution, 
+                  there's a human story. Someone's dream to start a business, a student's 
+                  ambition to excel, or an organization's mission to serve better.
+                </p>
+                <p className="text-gray-600 leading-relaxed">
+                  That's why we don't just write code - we craft experiences. We don't just 
+                  build websites - we create digital homes for brands. We don't just provide 
+                  services - we build lasting partnerships.
+                </p>
+              </div>
+            </div>
+            
+            <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="bg-gradient-to-r from-amber-500 to-yellow-600 p-6 rounded-2xl text-white shadow-lg">
+                <h4 className="text-xl font-bold mb-4 flex items-center">
+                  <Target className="w-6 h-6 mr-3" />
+                  Our Promise
+                </h4>
+                <p>
+                  "Every line of code we write, every design we create, every solution we deliver 
+                  carries our commitment to excellence and our passion for helping you succeed. 
+                  Your success is our success."
+                </p>
+                <p className="text-sm mt-4 text-amber-100 font-medium">- Dennis Amutsa, Founder</p>
               </div>
             </div>
           </div>

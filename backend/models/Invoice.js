@@ -93,3 +93,4 @@ invoiceSchema.index({ client: 1, status: 1, issueDate: -1 });
 
 module.exports = mongoose.model('Invoice', invoiceSchema);
 
+
