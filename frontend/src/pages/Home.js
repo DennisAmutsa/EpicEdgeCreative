@@ -399,10 +399,22 @@ const Home = () => {
                   
                     {/* Compact project button */}
                     <div className="flex items-center justify-between">
-                      <button className="inline-flex items-center text-amber-600 hover:text-amber-700 font-medium text-sm transition-all duration-300">
-                        <span className="border-b border-amber-200 group-hover:border-amber-500 transition-colors duration-300">View Project</span>
-                        <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
-                      </button>
+                      {project.link ? (
+                        <a 
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-amber-600 hover:text-amber-700 font-medium text-sm transition-all duration-300"
+                        >
+                          <span className="border-b border-amber-200 group-hover:border-amber-500 transition-colors duration-300">View Project</span>
+                          <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                        </a>
+                      ) : (
+                        <button className="inline-flex items-center text-amber-600 hover:text-amber-700 font-medium text-sm transition-all duration-300 cursor-not-allowed opacity-50">
+                          <span className="border-b border-amber-200 group-hover:border-amber-500 transition-colors duration-300">View Project</span>
+                          <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                        </button>
+                      )}
                       
                       {/* Compact status indicator */}
                       <div className="flex items-center gap-1">
