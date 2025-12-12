@@ -7,7 +7,7 @@ const AuthContext = createContext();
 // Configure axios defaults
 // Auto-detect environment and set appropriate API URL
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const defaultApiUrl = isLocalhost ? 'http://localhost:5000' : 'https://epicedgecreative.onrender.com';
+const defaultApiUrl = isLocalhost ? 'http://localhost:5000' : 'https://epicedgecreative.amutsa.com';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL || defaultApiUrl;
 

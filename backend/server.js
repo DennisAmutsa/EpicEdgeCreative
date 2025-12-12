@@ -18,6 +18,8 @@ const corsOptions = {
     
     const allowedOrigins = process.env.NODE_ENV === 'production' 
       ? [
+          'https://epicedgecreative.amutsa.com',
+          'https://www.epicedgecreative.amutsa.com',
           'https://epicedgecreative.vercel.app',
           'https://epic-edge-creative-frontend.vercel.app',
           process.env.FRONTEND_URL
@@ -101,24 +103,9 @@ app.get('/api/cors-test', (req, res) => {
   });
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Welcome to EpicEdge Creative API',
-    version: '1.0.0',
-    endpoints: {
-      health: '/api/health',
-      auth: '/api/auth',
-      projects: '/api/projects',
-      users: '/api/users',
-      contact: '/api/contact'
-    }
-  });
-});
-
-// 404 handler
+// 404 handler - only for API routes (non-API routes are handled by middleware above)
 app.use('*', (req, res) => {
+  // This will only be reached for /api/* routes that don't match any handler
   res.status(404).json({
     success: false,
     message: 'API endpoint not found'
@@ -136,11 +123,17 @@ app.use((error, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 EpicEdge Creative API server running on port ${PORT}`);
-  console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 API URL: http://localhost:${PORT}`);
-});
+// Passenger-compatible listen
+if (process.env.PASSENGER_ENV) {
+  // Passenger sets its own port automatically
+  module.exports = app;
+} else {
+  // Local dev
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 EpicEdge Creative API server running on port ${PORT}`);
+    console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 API URL: http://localhost:${PORT}`);
+  });
+}
 
