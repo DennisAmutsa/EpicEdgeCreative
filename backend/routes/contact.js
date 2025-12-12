@@ -12,10 +12,12 @@ const nodemailer = require('nodemailer');
 // Create transporter for email sending
 const createTransporter = () => {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.EMAIL_SECURE === 'true',
     auth: {
-      user: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
-      pass: process.env.EMAIL_PASS || 'your-app-password' // Use App Password for Gmail
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   });
 };
@@ -24,20 +26,20 @@ const createTransporter = () => {
 const sendCallbackConfirmation = async (contactData) => {
   try {
     const transporter = createTransporter();
-    
+
     // Extract information from callback request message
     const nameMatch = contactData.message.match(/Name:\s*([^\n]+)/);
     const emailMatch = contactData.message.match(/Email:\s*([^\s\n]+@[^\s\n]+)/);
     const phoneMatch = contactData.message.match(/Phone:\s*([^\n]+)/);
     const dateMatch = contactData.message.match(/Preferred Date:\s*([^\n]+)/);
     const timeMatch = contactData.message.match(/Preferred Time:\s*([^\n]+)/);
-    
+
     const customerName = nameMatch ? nameMatch[1].trim() : contactData.firstName;
     const customerEmail = emailMatch ? emailMatch[1].trim() : contactData.email;
     const customerPhone = phoneMatch ? phoneMatch[1].trim() : '';
     const preferredDate = dateMatch ? dateMatch[1].trim() : '';
     const preferredTime = timeMatch ? timeMatch[1].trim() : '';
-    
+
     const mailOptions = {
       from: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
       to: customerEmail,
@@ -93,7 +95,7 @@ const sendCallbackConfirmation = async (contactData) => {
             <div class="footer">
               <p><strong>📧 Email:</strong> epicedgecreative@gmail.com</p>
               <p><strong>📱 Phone:</strong> +254 787 205 456</p>
-              <p><strong>🌐 Website:</strong> <a href="https://epicedgecreative.vercel.app/" style="color: #d97706;">epicedgecreative.vercel.app</a></p>
+              <p><strong>🌐 Website:</strong> <a href="https://epicedgecreative.amutsa.com/" style="color: #d97706;">epicedgecreative.amutsa.com</a></p>
               <p style="margin-top: 20px; font-size: 12px;">
                 This is an automated confirmation email. Please do not reply to this email.
               </p>
@@ -103,7 +105,7 @@ const sendCallbackConfirmation = async (contactData) => {
         </html>
       `
     };
-    
+
     await transporter.sendMail(mailOptions);
     console.log('Callback confirmation email sent successfully to:', customerEmail);
     return true;
@@ -117,9 +119,9 @@ const sendCallbackConfirmation = async (contactData) => {
 const sendAdminNotification = async (contactData) => {
   try {
     const transporter = createTransporter();
-    
+
     const adminEmail = process.env.ADMIN_EMAIL || 'epicedgecreative@gmail.com';
-    
+
     const mailOptions = {
       from: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
       to: adminEmail,
@@ -181,7 +183,7 @@ const sendAdminNotification = async (contactData) => {
         </html>
       `
     };
-    
+
     await transporter.sendMail(mailOptions);
     console.log('Admin notification email sent successfully to:', adminEmail);
     return true;
@@ -224,12 +226,12 @@ router.post('/', async (req, res) => {
     // Send automatic confirmation email for callback requests
     let emailSent = false;
     let adminNotified = false;
-    
+
     if (subject === 'callback-request') {
       try {
         // Send confirmation to customer
         emailSent = await sendCallbackConfirmation(contact);
-        
+
         // Send notification to admin
         adminNotified = await sendAdminNotification(contact);
       } catch (emailError) {
@@ -241,7 +243,7 @@ router.post('/', async (req, res) => {
     // Send push notifications to all admins for any contact form submission
     try {
       const admins = await User.find({ role: 'admin' }).select('_id');
-      
+
       if (admins.length > 0) {
         const adminIds = admins.map(admin => admin._id);
         const pushSubscriptions = await PushSubscription.find({
@@ -271,8 +273,8 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: subject === 'callback-request' 
-        ? (emailSent 
+      message: subject === 'callback-request'
+        ? (emailSent
           ? 'Your callback request has been submitted! A confirmation email has been sent to you with details.'
           : 'Your callback request has been submitted! We\'ll get back to you within 24 hours.')
         : 'Your message has been sent successfully! We\'ll get back to you within 24 hours.',
@@ -298,7 +300,7 @@ router.post('/', async (req, res) => {
 router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { page = 1, limit = 10, status } = req.query;
-    
+
     // Build filter
     const filter = {};
     if (status && ['unread', 'read', 'replied'].includes(status)) {
@@ -340,7 +342,7 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
 router.put('/:id/status', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { status } = req.body;
-    
+
     if (!['unread', 'read', 'replied'].includes(status)) {
       return res.status(400).json({
         success: false,

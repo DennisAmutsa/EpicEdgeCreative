@@ -12,39 +12,39 @@ const router = express.Router();
 router.get('/', authenticateToken, async (req, res) => {
   try {
     let query = {};
-    
+
     if (req.user.role === 'client') {
       query.client = req.user._id;
     }
     // Admin can see all invoices (no filter)
-    
+
     const { status, search } = req.query;
-    
+
     if (status && status !== 'all') {
       query.status = status;
     }
-    
+
     const invoices = await Invoice.find(query)
       .populate('client', 'name email')
       .populate('project', 'title category')
       .sort({ issueDate: -1 });
-    
+
     // Filter by search term if provided
     let filteredInvoices = invoices;
     if (search) {
-      filteredInvoices = invoices.filter(invoice => 
+      filteredInvoices = invoices.filter(invoice =>
         invoice.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
         invoice.project?.title?.toLowerCase().includes(search.toLowerCase()) ||
         invoice.description.toLowerCase().includes(search.toLowerCase())
       );
     }
-    
-    res.json({ 
-      success: true, 
-      data: { 
+
+    res.json({
+      success: true,
+      data: {
         invoices: filteredInvoices,
-        total: filteredInvoices.length 
-      } 
+        total: filteredInvoices.length
+      }
     });
   } catch (error) {
     console.error('Get invoices error:', error);
@@ -58,13 +58,13 @@ router.get('/', authenticateToken, async (req, res) => {
 router.get('/summary', authenticateToken, async (req, res) => {
   try {
     let query = {};
-    
+
     if (req.user.role === 'client') {
       query.client = req.user._id;
     }
-    
+
     const invoices = await Invoice.find(query);
-    
+
     const summary = {
       totalValue: invoices.reduce((sum, inv) => sum + inv.total, 0),
       paidValue: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0),
@@ -75,7 +75,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
       pendingInvoices: invoices.filter(inv => ['sent', 'draft'].includes(inv.status)).length,
       overdueInvoices: invoices.filter(inv => inv.status === 'overdue').length
     };
-    
+
     res.json({ success: true, data: { summary } });
   } catch (error) {
     console.error('Get invoice summary error:', error);
@@ -89,19 +89,19 @@ router.get('/summary', authenticateToken, async (req, res) => {
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
     let query = { _id: req.params.id };
-    
+
     if (req.user.role === 'client') {
       query.client = req.user._id;
     }
-    
+
     const invoice = await Invoice.findOne(query)
       .populate('client', 'name email')
       .populate('project', 'title category description');
-    
+
     if (!invoice) {
       return res.status(404).json({ success: false, message: 'Invoice not found' });
     }
-    
+
     res.json({ success: true, data: { invoice } });
   } catch (error) {
     console.error('Get invoice error:', error);
@@ -119,19 +119,19 @@ router.get('/summary', authenticateToken, requireAdmin, async (req, res) => {
         $group: {
           _id: null,
           totalValue: { $sum: '$total' },
-          paidValue: { 
-            $sum: { 
-              $cond: [{ $eq: ['$status', 'paid'] }, '$total', 0] 
+          paidValue: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'paid'] }, '$total', 0]
             }
           },
-          pendingValue: { 
-            $sum: { 
-              $cond: [{ $in: ['$status', ['sent', 'draft']] }, '$total', 0] 
+          pendingValue: {
+            $sum: {
+              $cond: [{ $in: ['$status', ['sent', 'draft']] }, '$total', 0]
             }
           },
-          overdueValue: { 
-            $sum: { 
-              $cond: [{ $eq: ['$status', 'overdue'] }, '$total', 0] 
+          overdueValue: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'overdue'] }, '$total', 0]
             }
           }
         }
@@ -145,9 +145,9 @@ router.get('/summary', authenticateToken, requireAdmin, async (req, res) => {
       overdueValue: 0
     };
 
-    res.json({ 
-      success: true, 
-      data: { summary: summaryData } 
+    res.json({
+      success: true,
+      data: { summary: summaryData }
     });
   } catch (error) {
     console.error('Get invoices summary error:', error);
@@ -168,15 +168,15 @@ router.post('/', authenticateToken, requireAdmin, [
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, message: 'Validation errors', errors: errors.array() });
   }
-  
+
   try {
     const { projectId, amount, dueDate, description, items, taxRate, notes } = req.body;
-    
+
     const project = await Project.findById(projectId).populate('client');
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found' });
     }
-    
+
     // Generate invoice number
     const invoiceCount = await Invoice.countDocuments();
     const invoiceNumber = `INV-${String(invoiceCount + 1).padStart(4, '0')}`;
@@ -186,7 +186,7 @@ router.post('/', authenticateToken, requireAdmin, [
     const subtotal = amount;
     const taxAmount = subtotal * (taxRateValue / 100);
     const total = subtotal + taxAmount;
-    
+
     const invoice = new Invoice({
       invoiceNumber: invoiceNumber,
       client: project.client._id,
@@ -206,18 +206,20 @@ router.post('/', authenticateToken, requireAdmin, [
       total: total,
       notes
     });
-    
+
     await invoice.save();
     await invoice.populate('client', 'name email');
     await invoice.populate('project', 'title category');
-    
+
     // Send email notification to client
     try {
       const nodemailer = require('nodemailer');
-      
+
       // Create transporter
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: process.env.EMAIL_SECURE === 'true',
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS
@@ -260,7 +262,7 @@ router.post('/', authenticateToken, requireAdmin, [
             </div>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://your-domain.com/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              <a href="https://epicedgecreative.amutsa.com/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                 View Invoice
               </a>
             </div>
@@ -291,7 +293,7 @@ router.post('/', authenticateToken, requireAdmin, [
 
       await transporter.sendMail(mailOptions);
       console.log(`Invoice notification email sent to: ${invoice.client.email}`);
-      
+
     } catch (emailError) {
       console.error('Error sending invoice notification email:', emailError);
       // Don't fail the request if email fails, just log it
@@ -301,8 +303,13 @@ router.post('/', authenticateToken, requireAdmin, [
     try {
       const nodemailer = require('nodemailer');
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: process.env.EMAIL_SECURE === 'true',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
       });
 
       const adminEmailSubject = `New Invoice Created - #${invoice.invoiceNumber}`;
@@ -335,7 +342,7 @@ router.post('/', authenticateToken, requireAdmin, [
             </div>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:3000/admin-billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              <a href="https://epicedgecreative.amutsa.com/admin/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                 Manage Invoice
               </a>
             </div>
@@ -363,7 +370,7 @@ router.post('/', authenticateToken, requireAdmin, [
     // Create in-system notification for client
     try {
       const Notification = require('../models/Notification');
-      
+
       await Notification.createNotification({
         recipient: invoice.client._id,
         sender: req.user._id, // Admin who created the invoice
@@ -382,17 +389,17 @@ router.post('/', authenticateToken, requireAdmin, [
           projectTitle: invoice.project.title
         }
       });
-      
+
       console.log(`In-system notification created for client: ${invoice.client.name} (Invoice: ${invoice.invoiceNumber})`);
     } catch (notificationError) {
       console.error('Error creating invoice notification for client:', notificationError);
       // Don't fail the request if notification creation fails
     }
-    
-    res.status(201).json({ 
-      success: true, 
-      message: 'Invoice created successfully and notification sent!', 
-      data: { invoice } 
+
+    res.status(201).json({
+      success: true,
+      message: 'Invoice created successfully and notification sent!',
+      data: { invoice }
     });
   } catch (error) {
     console.error('Create invoice error:', error);
@@ -410,10 +417,10 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, message: 'Validation errors', errors: errors.array() });
   }
-  
+
   try {
     const { status, paymentMethod } = req.body;
-    
+
     const updateData = { status };
     if (status === 'paid') {
       updateData.paymentDate = new Date();
@@ -421,25 +428,27 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
         updateData.paymentMethod = paymentMethod;
       }
     }
-    
+
     const invoice = await Invoice.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true }
     ).populate('client', 'name email').populate('project', 'title category');
-    
+
     if (!invoice) {
       return res.status(404).json({ success: false, message: 'Invoice not found' });
     }
-    
+
     // Send email notification when invoice is sent
     if (status === 'sent') {
       try {
         const nodemailer = require('nodemailer');
-        
+
         // Create transporter
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          secure: process.env.EMAIL_SECURE === 'true',
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
@@ -487,10 +496,10 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="https://your-domain.com/billing" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; margin: 0 10px;">
+                <a href="https://epicedgecreative.amutsa.com/billing" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; margin: 0 10px;">
                   💳 Pay Now
                 </a>
-                <a href="https://your-domain.com/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; margin: 0 10px;">
+                <a href="https://epicedgecreative.amutsa.com/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; margin: 0 10px;">
                   📄 View Invoice
                 </a>
               </div>
@@ -519,9 +528,9 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
           html: emailBody
         };
 
-              await transporter.sendMail(mailOptions);
-      console.log(`Invoice sent notification email sent to: ${invoice.client.email}`);
-        
+        await transporter.sendMail(mailOptions);
+        console.log(`Invoice sent notification email sent to: ${invoice.client.email}`);
+
       } catch (emailError) {
         console.error('Error sending invoice sent notification email:', emailError);
         // Don't fail the request if email fails, just log it
@@ -531,8 +540,13 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
       try {
         const nodemailer = require('nodemailer');
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          secure: process.env.EMAIL_SECURE === 'true',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+          }
         });
 
         const adminEmailSubject = `Invoice Sent - #${invoice.invoiceNumber}`;
@@ -581,15 +595,17 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
         console.error('Error sending admin invoice sent notification:', adminEmailError);
       }
     }
-    
+
     // Send payment confirmation email when invoice is marked as paid
     if (status === 'paid') {
       try {
         const nodemailer = require('nodemailer');
-        
+
         // Create transporter
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          secure: process.env.EMAIL_SECURE === 'true',
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
@@ -627,7 +643,7 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="https://your-domain.com/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                <a href="https://epicedgecreative.amutsa.com/billing" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                   📄 View Receipt
                 </a>
               </div>
@@ -656,9 +672,9 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
           html: emailBody
         };
 
-              await transporter.sendMail(mailOptions);
-      console.log(`Payment confirmation email sent to: ${invoice.client.email}`);
-        
+        await transporter.sendMail(mailOptions);
+        console.log(`Payment confirmation email sent to: ${invoice.client.email}`);
+
       } catch (emailError) {
         console.error('Error sending payment confirmation email:', emailError);
         // Don't fail the request if email fails, just log it
@@ -668,8 +684,13 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
       try {
         const nodemailer = require('nodemailer');
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          secure: process.env.EMAIL_SECURE === 'true',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+          }
         });
 
         const adminEmailSubject = `Payment Received - Invoice #${invoice.invoiceNumber}`;
@@ -704,7 +725,7 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
               </div>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="http://localhost:3000/admin-billing" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                <a href="https://epicedgecreative.amutsa.com/admin/billing" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                   View Billing Dashboard
                 </a>
               </div>
@@ -725,15 +746,15 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
         console.error('Error sending admin payment notification:', adminEmailError);
       }
     }
-    
-    const statusMessage = status === 'sent' ? 'Invoice status updated and notification sent!' : 
-                         status === 'paid' ? 'Invoice marked as paid and confirmation sent!' :
-                         'Invoice status updated successfully';
-    
-    res.json({ 
-      success: true, 
-      message: statusMessage, 
-      data: { invoice } 
+
+    const statusMessage = status === 'sent' ? 'Invoice status updated and notification sent!' :
+      status === 'paid' ? 'Invoice marked as paid and confirmation sent!' :
+        'Invoice status updated successfully';
+
+    res.json({
+      success: true,
+      message: statusMessage,
+      data: { invoice }
     });
   } catch (error) {
     console.error('Update invoice status error:', error);
@@ -745,10 +766,10 @@ router.put('/:id/status', authenticateToken, requireAdmin, [
 // @desc    Client reports payment made (Client only)
 // @access  Private (Client)
 router.post('/:id/report-payment', authenticateToken, [
-  body('paymentMethod').optional().isIn(['bank_transfer', 'credit_card', 'paypal', 'mobile_money', 'cash', 'other']).withMessage('Invalid payment method'),
-  body('transactionId').optional().trim().isLength({ min: 1 }).withMessage('Transaction ID cannot be empty'),
-  body('paymentDate').optional().isISO8601().withMessage('Valid payment date is required'),
-  body('notes').optional().trim().isLength({ max: 500 }).withMessage('Notes must be 500 characters or less')
+  body('paymentMethod').optional({ checkFalsy: true }).isIn(['bank_transfer', 'credit_card', 'paypal', 'mobile_money', 'cash', 'check', 'other']).withMessage('Invalid payment method'),
+  body('transactionId').optional({ checkFalsy: true }).trim(),
+  body('paymentDate').optional({ checkFalsy: true }).isISO8601().withMessage('Valid payment date is required'),
+  body('notes').optional({ checkFalsy: true }).trim().isLength({ max: 500 }).withMessage('Notes must be 500 characters or less')
 ], async (req, res) => {
   console.log('Payment report request received:', {
     invoiceId: req.params.id,
@@ -762,24 +783,24 @@ router.post('/:id/report-payment', authenticateToken, [
     console.log('Validation errors:', errors.array());
     return res.status(400).json({ success: false, message: 'Validation errors', errors: errors.array() });
   }
-  
+
   try {
     const { paymentMethod, transactionId, paymentDate, notes } = req.body;
-    
+
     const invoice = await Invoice.findById(req.params.id).populate('client', 'name email').populate('project', 'title category');
-    
+
     console.log('Invoice found:', {
       invoiceId: invoice?._id,
       status: invoice?.status,
       clientId: invoice?.client?._id,
       requestingUserId: req.user._id
     });
-    
+
     if (!invoice) {
       console.log('Invoice not found for ID:', req.params.id);
       return res.status(404).json({ success: false, message: 'Invoice not found' });
     }
-    
+
     // Check if client owns this invoice
     if (invoice.client._id.toString() !== req.user._id.toString()) {
       console.log('Access denied - client mismatch:', {
@@ -788,7 +809,7 @@ router.post('/:id/report-payment', authenticateToken, [
       });
       return res.status(403).json({ success: false, message: 'Access denied' });
     }
-    
+
     // Check if invoice can receive payment reports
     if (!['sent', 'overdue'].includes(invoice.status)) {
       console.log('Invalid invoice status for payment report:', {
@@ -797,13 +818,18 @@ router.post('/:id/report-payment', authenticateToken, [
       });
       return res.status(400).json({ success: false, message: 'Payment can only be reported for sent or overdue invoices' });
     }
-    
+
     // Send admin notification email about payment report
     try {
       const nodemailer = require('nodemailer');
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: process.env.EMAIL_SECURE === 'true',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
       });
 
       const adminEmailSubject = `Payment Reported by Client - Invoice #${invoice.invoiceNumber}`;
@@ -846,7 +872,7 @@ router.post('/:id/report-payment', authenticateToken, [
             </div>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:3000/admin-billing" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              <a href="https://epicedgecreative.amutsa.com/admin/billing" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                 Verify & Update Invoice
               </a>
             </div>
@@ -874,7 +900,7 @@ router.post('/:id/report-payment', authenticateToken, [
 
       await transporter.sendMail(adminMailOptions);
       console.log(`Payment report notification sent to admin for invoice: ${invoice.invoiceNumber}`);
-      
+
     } catch (emailError) {
       console.error('Error sending payment report email to admin:', emailError);
       // Don't fail the request if email fails
@@ -884,10 +910,10 @@ router.post('/:id/report-payment', authenticateToken, [
     try {
       const Notification = require('../models/Notification');
       const User = require('../models/User');
-      
+
       // Find admin user (assuming there's only one admin or we want to notify all admins)
       const adminUsers = await User.find({ isAdmin: true });
-      
+
       for (const admin of adminUsers) {
         await Notification.createNotification({
           recipient: admin._id,
@@ -909,17 +935,17 @@ router.post('/:id/report-payment', authenticateToken, [
           }
         });
       }
-      
+
       console.log(`In-system notification created for payment report: ${invoice.invoiceNumber}`);
     } catch (notificationError) {
       console.error('Error creating payment report notification:', notificationError);
       // Don't fail the request if notification creation fails
     }
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Payment report submitted successfully! Admin has been notified and will verify the payment.',
-      data: { 
+      data: {
         invoice: {
           invoiceNumber: invoice.invoiceNumber,
           status: invoice.status,
@@ -939,11 +965,11 @@ router.post('/:id/report-payment', authenticateToken, [
 router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const invoice = await Invoice.findByIdAndDelete(req.params.id);
-    
+
     if (!invoice) {
       return res.status(404).json({ success: false, message: 'Invoice not found' });
     }
-    
+
     res.json({ success: true, message: 'Invoice deleted successfully' });
   } catch (error) {
     console.error('Delete invoice error:', error);

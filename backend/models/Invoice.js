@@ -38,7 +38,7 @@ const invoiceSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['bank_transfer', 'credit_card', 'paypal', 'check', 'other']
+    enum: ['bank_transfer', 'credit_card', 'paypal', 'check', 'mobile_money', 'cash', 'other']
   },
   description: {
     type: String,
@@ -73,7 +73,7 @@ const invoiceSchema = new mongoose.Schema({
 });
 
 // Generate invoice number
-invoiceSchema.pre('save', async function(next) {
+invoiceSchema.pre('save', async function (next) {
   if (!this.invoiceNumber) {
     const count = await mongoose.models.Invoice.countDocuments();
     this.invoiceNumber = `INV-${String(count + 1).padStart(4, '0')}`;
@@ -82,7 +82,7 @@ invoiceSchema.pre('save', async function(next) {
 });
 
 // Calculate totals
-invoiceSchema.pre('save', function(next) {
+invoiceSchema.pre('save', function (next) {
   this.subtotal = this.items.reduce((sum, item) => sum + (item.amount || 0), 0);
   this.taxAmount = this.subtotal * (this.taxRate / 100);
   this.total = this.subtotal + this.taxAmount;
