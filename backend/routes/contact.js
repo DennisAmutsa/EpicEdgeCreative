@@ -115,6 +115,69 @@ const sendCallbackConfirmation = async (contactData) => {
   }
 };
 
+// Function to send generic confirmation email for general inquiries
+const sendGenericUserConfirmation = async (contactData) => {
+  try {
+    const transporter = createTransporter();
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
+      to: contactData.email,
+      subject: `Message Received - EpicEdge Creative`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; }
+            .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+            .footer { background: #f9fafb; padding: 20px; border-radius: 0 0 10px 10px; text-align: center; color: #6b7280; }
+            .highlight { background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>📨 We Received Your Message!</h1>
+            </div>
+            <div class="content">
+              <h2>Hello ${contactData.firstName},</h2>
+              
+              <p>Thank you for getting in touch with <strong>EpicEdge Creative</strong>. We have successfully received your message.</p>
+              
+              <div class="highlight">
+                <h3>📝 Your Message Details:</h3>
+                <p><strong>Subject:</strong> ${contactData.subject}</p>
+                <p><strong>Message:</strong><br> ${contactData.message}</p>
+              </div>
+              
+              <h3>🚀 What happens next?</h3>
+              <p>Our team is reviewing your inquiry and will get back to you as soon as possible, usually within 24 hours.</p>
+              
+              <p>Best regards,<br>
+              <strong>EpicEdge Creative Team</strong></p>
+            </div>
+            <div class="footer">
+              <p><strong>📧 Email:</strong> epicedgecreative@gmail.com</p>
+              <p><strong>🌐 Website:</strong> <a href="https://epicedgecreative.amutsa.com/" style="color: #d97706;">epicedgecreative.amutsa.com</a></p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Generic confirmation email sent successfully to:', contactData.email);
+    return true;
+  } catch (error) {
+    console.error('Error sending generic confirmation email:', error);
+    return false;
+  }
+};
+
 // Function to send admin notification email about new callback requests
 const sendAdminNotification = async (contactData) => {
   try {
@@ -122,10 +185,21 @@ const sendAdminNotification = async (contactData) => {
 
     const adminEmail = process.env.ADMIN_EMAIL || 'epicedgecreative@gmail.com';
 
+    const isCallback = contactData.subject === 'callback-request';
+    const emailSubject = isCallback
+      ? `🔔 New Callback Request - ${contactData.firstName} ${contactData.lastName}`
+      : `📨 New Message: ${contactData.subject} - ${contactData.firstName} ${contactData.lastName}`;
+
+    const headerTitle = isCallback ? '🔔 New Callback Request!' : '📨 New Message Received!';
+    const introText = isCallback
+      ? 'A new callback request has been submitted through your website!'
+      : 'A new message has been submitted through your website contact form.';
+    const detailsTitle = isCallback ? '📋 Callback Request Details:' : '📝 Message Details:';
+
     const mailOptions = {
       from: process.env.EMAIL_USER || 'epicedgecreative@gmail.com',
       to: adminEmail,
-      subject: `🔔 New Callback Request - ${contactData.firstName} ${contactData.lastName}`,
+      subject: emailSubject,
       html: `
         <!DOCTYPE html>
         <html>
@@ -143,32 +217,31 @@ const sendAdminNotification = async (contactData) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🔔 New Callback Request!</h1>
+              <h1>${headerTitle}</h1>
             </div>
             <div class="content">
               <h2>Hello Admin,</h2>
               
-              <p>A new callback request has been submitted through your website!</p>
+              <p>${introText}</p>
               
               <div class="highlight">
-                <h3>📋 Callback Request Details:</h3>
+                <h3>${detailsTitle}</h3>
                 <p><strong>Name:</strong> ${contactData.firstName} ${contactData.lastName}</p>
                 <p><strong>Email:</strong> ${contactData.email}</p>
                 <p><strong>Company:</strong> ${contactData.company || 'Not specified'}</p>
                 <p><strong>Subject:</strong> ${contactData.subject}</p>
-                <p><strong>Message:</strong> ${contactData.message}</p>
+                <p><strong>Message:</strong><br>${contactData.message}</p>
                 <p><strong>Submitted:</strong> ${new Date(contactData.createdAt).toLocaleString()}</p>
               </div>
               
               <h3>🚀 Action Required:</h3>
               <ol>
-                <li><strong>Review:</strong> Check the request details above</li>
-                <li><strong>Prepare:</strong> Gather any necessary information for the call</li>
-                <li><strong>Call:</strong> Contact the client at their preferred time</li>
+                <li><strong>Review:</strong> Check the details above</li>
+                <li><strong>Respond:</strong> Reply to the client's inquiry</li>
                 <li><strong>Update:</strong> Mark as 'replied' in your admin panel</li>
               </ol>
               
-              <p><strong>Client Contact:</strong> ${contactData.email} | ${contactData.phone || 'Phone not provided'}</p>
+              <p><strong>Client Contact:</strong> ${contactData.email} ${contactData.phone ? `| ${contactData.phone}` : ''}</p>
               
               <p>Best regards,<br>
               <strong>EpicEdge Creative System</strong></p>
@@ -223,21 +296,23 @@ router.post('/', async (req, res) => {
 
     await contact.save();
 
-    // Send automatic confirmation email for callback requests
+    // Send email notifications
     let emailSent = false;
     let adminNotified = false;
 
-    if (subject === 'callback-request') {
-      try {
-        // Send confirmation to customer
-        emailSent = await sendCallbackConfirmation(contact);
+    try {
+      // 1. ALWAYS send notification to admin
+      adminNotified = await sendAdminNotification(contact);
 
-        // Send notification to admin
-        adminNotified = await sendAdminNotification(contact);
-      } catch (emailError) {
-        console.error('Error sending emails:', emailError);
-        // Don't fail the request if email fails
+      // 2. Send appropriate confirmation to customer
+      if (subject === 'callback-request') {
+        emailSent = await sendCallbackConfirmation(contact);
+      } else {
+        emailSent = await sendGenericUserConfirmation(contact);
       }
+    } catch (emailError) {
+      console.error('Error sending emails:', emailError);
+      // Don't fail the request if email fails
     }
 
     // Send push notifications to all admins for any contact form submission
